@@ -1,0 +1,9 @@
+{
+  // Cloudflare 設定檔：網站名稱與網頁檔案所在的資料夾
+  "name": "jenbio",
+  "compatibility_date": "2025-10-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./public"
+  }
+}
