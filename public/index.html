@@ -1,351 +1,551 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>jenbio｜生物老師的數位教學</title>
+<title>jenbio · Biology by Inquiry</title>
 <style>
-  :root{--ink:#1d1d1f;--sub:#6e6e73;--line:#d2d2d7;--bg:#f5f5f7;--accent:#0071e3;--green:#2e8b57}
+  :root{--ink:#1d1d1f;--sub:#6e6e73;--line:#d2d2d7;--bg:#f5f5f7;--accent:#0071e3;--green:#2e8b57;--bar:#1d1d1f}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);background:#fff;line-height:1.7;-webkit-font-smoothing:antialiased}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);background:#fff;line-height:1.7;-webkit-font-smoothing:antialiased}
   a{color:var(--accent);text-decoration:none}
-  section{scroll-margin-top:52px}
   .todo{background:#fff4d6;color:#8a5a00;border-radius:4px;padding:0 4px}
 
-  /* 上方選單：細長、半透明，像 Apple 官網 */
-  nav{position:sticky;top:0;z-index:20;background:rgba(251,251,253,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08)}
-  nav .in{max-width:1024px;margin:0 auto;height:48px;padding:0 22px;display:flex;align-items:center;gap:28px}
-  nav .logo{font-weight:700;font-size:17px;color:var(--ink);letter-spacing:.02em}
-  nav .links{display:flex;gap:28px;margin-left:auto}
-  nav .links a{color:var(--ink);opacity:.8;font-size:13px}
-  nav .links a:hover{opacity:1}
-  .burger{display:none;margin-left:auto;background:none;border:0;font-size:20px;cursor:pointer;color:var(--ink)}
+  /* ===== 黑色橫欄 ===== */
+  .topbar{position:sticky;top:0;z-index:30;background:var(--bar)}
+  .topbar .in{max-width:1200px;margin:0 auto;height:64px;padding:0 24px;display:flex;align-items:center;gap:18px}
+  .brand{color:#fff;font-weight:700;font-size:20px;letter-spacing:.03em;white-space:nowrap}
+  .menu{display:flex;align-items:center;gap:26px;margin-left:auto}
+  .menu a{color:#c7c7cc;font-size:15px;white-space:nowrap;transition:color .2s}
+  .menu a:hover{color:#fff}
+  .menu a.on{color:#fff;font-weight:600;text-shadow:0 0 12px rgba(255,255,255,.35)}
+  .menu a.cta{background:var(--accent);color:#fff;padding:8px 20px;border-radius:980px;font-weight:500}
+  .lang{display:inline-flex;border:1px solid #48484a;border-radius:980px;overflow:hidden;margin-left:6px}
+  .lang button{font:inherit;font-size:13px;background:none;border:0;color:#c7c7cc;padding:4px 11px;cursor:pointer}
+  .lang button.on{background:#fff;color:#1d1d1f;font-weight:600}
+  .burger{display:none;background:none;border:0;color:#fff;font-size:24px;cursor:pointer;margin-left:auto}
 
-  /* 主視覺 */
-  .hero{text-align:center;padding:100px 22px 70px}
-  .hero .avatar{width:132px;height:132px;border-radius:50%;margin:0 auto 26px;background:linear-gradient(135deg,#a8e6cf,#3e9b6b);display:grid;place-items:center;color:#fff;font-size:52px;font-weight:700;box-shadow:0 10px 30px rgba(46,139,87,.25)}
-  .hero h1{font-size:clamp(44px,8vw,80px);line-height:1.05;margin:0 0 14px;letter-spacing:-.015em}
-  .hero .tag{font-size:clamp(20px,3vw,28px);font-weight:600;margin:0 auto 10px;
-    background:linear-gradient(90deg,#2e8b57,#0071e3);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero p{color:var(--sub);font-size:19px;max-width:640px;margin:0 auto 28px}
-  .btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-  .btn{padding:11px 24px;border-radius:980px;background:var(--accent);color:#fff;font-size:17px}
-  .btn.link{background:none;color:var(--accent);padding:11px 6px}
+  /* ===== 分頁 ===== */
+  .page{display:none;scroll-margin-top:64px}
+  .page.show{display:block;animation:fade .45s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-  .wrap{max-width:1024px;margin:0 auto;padding:90px 22px}
+  /* ===== 首頁主視覺 ===== */
+  .hero{position:relative;overflow:hidden;background:#fff;min-height:560px}
+  .hero .in{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:70px 24px 190px;display:grid;grid-template-columns:1.15fr 1fr;align-items:center;gap:20px}
+  .hero-left{display:flex;align-items:center;gap:28px}
+  .hero-logo{width:170px;height:170px;flex:none}
+  .hero h1{font-size:clamp(46px,6.5vw,92px);line-height:1.02;margin:0;letter-spacing:-.02em;color:#3a3a3c}
+  .hero h1{white-space:nowrap}
+  html[lang^=zh] .hero h1{font-size:clamp(40px,5.4vw,76px);line-height:1.12}
+  .hero .tag{font-size:clamp(18px,2.2vw,26px);color:var(--green);font-weight:600;margin:10px 0 0}
+  .hero-tree{width:100%;max-width:480px;justify-self:end}
+  .hills{position:absolute;left:0;right:0;bottom:0;z-index:1;width:100%;height:260px;display:block}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:80px 24px}
   .grey{background:var(--bg)}
-  h2.t{font-size:clamp(32px,5vw,52px);line-height:1.12;text-align:center;margin:0 0 14px;letter-spacing:-.01em}
-  p.l{text-align:center;color:var(--sub);font-size:19px;max-width:680px;margin:0 auto 50px}
+  h2.t{font-size:clamp(32px,4.6vw,50px);line-height:1.15;text-align:center;margin:0 0 12px;letter-spacing:-.01em}
+  p.l{text-align:center;color:var(--sub);font-size:19px;max-width:700px;margin:0 auto 46px}
+  .page-head{text-align:center;padding:70px 24px 10px}
+  .page-head .eyebrow{color:var(--green);font-weight:600;font-size:16px;margin:0 0 6px}
 
-  /* 便當盒格線（Apple 常用的大小方塊排版） */
+  /* 概覽卡片 */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .card{background:#fff;border-radius:22px;padding:28px 26px;color:inherit;display:block;transition:transform .25s,box-shadow .25s}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.08)}
+  .card .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:16px}
+  .card .ic svg{width:26px;height:26px}
+  .card h3{margin:0 0 6px;font-size:21px}
+  .card p{margin:0;color:var(--sub);font-size:15px}
+  .card .go{display:inline-block;margin-top:12px;font-size:15px;color:var(--accent)}
+
+  /* 教師簡介 */
   .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
-  .tile{background:#fff;border-radius:24px;padding:30px;overflow:hidden;position:relative}
-  .grey .tile{background:#fff}
-  .tile.dark{background:#000;color:#f5f5f7}
-  .tile.dark p{color:#a1a1a6}
+  .tile{background:#fff;border-radius:24px;padding:30px}
+  .tile.dark{background:#000;color:#f5f5f7}.tile.dark p{color:#a1a1a6}
   .s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}
   .tile .k{font-size:14px;font-weight:600;color:var(--green);margin:0 0 6px}
   .tile.dark .k{color:#7ee2a8}
-  .tile h3{font-size:24px;line-height:1.3;margin:0 0 8px}
+  .tile h3{font-size:23px;line-height:1.3;margin:0 0 8px}
   .tile p{margin:0;color:var(--sub)}
-  .big{font-size:56px;font-weight:700;line-height:1;margin:6px 0 8px;
-    background:linear-gradient(135deg,#34c759,#0071e3);-webkit-background-clip:text;background-clip:text;color:transparent}
-
-  /* 認證徽章 */
+  .big{font-size:56px;font-weight:700;line-height:1;margin:6px 0 8px}
   .badges{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
   .badge{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-size:15px;background:#fff}
   .badge i{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-style:normal;color:#fff;font-weight:700;font-size:14px}
 
-  /* App 工具列 */
-  .apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:18px;margin-top:8px}
-  .app{text-align:center;font-size:14px;color:var(--sub)}
-  .app .ic{width:72px;height:72px;border-radius:18px;margin:0 auto 10px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:24px;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+  /* 影片 */
+  .vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+  .vid{background:#fff;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;color:inherit}
+  .vid .pic{aspect-ratio:16/9;display:flex;align-items:flex-end;padding:16px 18px;color:#fff;position:relative;overflow:hidden}
+  .vid .pic .code{font-size:12.5px;font-weight:600;background:rgba(255,255,255,.22);padding:2px 10px;border-radius:980px;position:relative;z-index:1}
+  .vid .pic .bg{position:absolute;right:-8px;bottom:-30px;font-size:120px;font-weight:800;opacity:.15;line-height:1}
+  .vid .body{padding:18px 22px 22px}
+  .vid h3{margin:0 0 6px;font-size:18.5px;line-height:1.45}
+  .vid p{margin:0;color:var(--sub);font-size:14.5px}
+  .chip{display:inline-block;font-size:12.5px;padding:1px 10px;border-radius:980px;background:var(--bg);color:var(--sub);margin:0 6px 8px 0}
+  .chip.done{background:#e3f4e8;color:#1e7b45}.chip.wip{background:#fff3e0;color:#b25e00}
+  .center{text-align:center;margin-top:34px}
+  .btn{display:inline-block;padding:11px 26px;border-radius:980px;background:var(--accent);color:#fff;font-size:17px}
+  .btn.ghost{background:none;color:var(--accent);border:1px solid var(--accent)}
 
-  /* 作品卡 */
-  .works{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
-  .work{background:var(--bg);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;color:inherit;transition:transform .3s}
-  a.work:hover{transform:scale(1.015)}
-  .work .pic{aspect-ratio:16/10;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:700;text-align:center;padding:20px}
-  .work .body{padding:24px 26px 28px}
-  .work h3{margin:0 0 6px;font-size:21px}
-  .work p{margin:0 0 12px;color:var(--sub);font-size:15px}
-  .work .more{font-size:15px;color:var(--accent)}
+  /* 課程單元 */
+  .unit-bar{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;margin-bottom:12px}
+  .seg{display:inline-flex;background:#e8e8ed;border-radius:12px;padding:3px}
+  .seg button{font:inherit;font-size:15px;border:0;background:none;padding:7px 16px;border-radius:9px;cursor:pointer;color:var(--ink)}
+  .seg button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12);font-weight:600}
+  .seg-label{font-size:14px;color:var(--sub);margin-right:6px}
+  .unit-sub{text-align:center;color:var(--sub);font-size:14px;margin:0 0 30px}
+  .units{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+  .unit{background:#fff;border-radius:22px;padding:26px 26px 22px;display:flex;flex-direction:column}
+  .unit .no{font-size:14px;font-weight:700;color:#fff;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:14px}
+  .unit h3{font-size:20px;margin:0 0 2px;line-height:1.35}
+  .unit .alt{font-size:13.5px;color:var(--sub)}
+  .unit .topic{font-size:13px;color:var(--sub);margin:8px 0 14px}
+  .unit ul{list-style:none;margin:auto 0 0;padding:14px 0 0;border-top:1px solid #ececf0}
+  .unit li{font-size:14.5px;padding:4px 0;display:flex;gap:8px;align-items:baseline}
+  .unit li .ty{flex:none;font-size:12px;padding:0 8px;border-radius:980px;background:var(--bg);color:var(--sub)}
+  .unit li .w{color:#b25e00;font-size:12px;flex:none}
+  .unit li.none{color:#a1a1a6}
+  .note{text-align:center;color:var(--sub);font-size:13px;margin-top:22px}
+
+  /* 數位教學 App */
+  .apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:22px}
+  .app{background:#fff;border-radius:20px;padding:24px 18px;text-align:center}
+  .app .ic{width:68px;height:68px;border-radius:17px;margin:0 auto 12px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:24px;box-shadow:0 6px 16px rgba(0,0,0,.12)}
+  .app h3{margin:0 0 4px;font-size:17px}
+  .app p{margin:0;color:var(--sub);font-size:13.5px}
 
   /* 研習時間軸 */
   .timeline{max-width:760px;margin:0 auto;border-left:2px solid var(--line);padding-left:30px}
-  .ev{position:relative;padding:0 0 36px}
+  .ev{position:relative;padding:0 0 34px}
   .ev:before{content:"";position:absolute;left:-38px;top:8px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--accent)}
   .ev .d{font-size:14px;color:var(--sub)}
   .ev h3{margin:2px 0 4px;font-size:20px}
   .ev p{margin:0;color:var(--sub)}
-  .ev .role{display:inline-block;font-size:12.5px;padding:1px 10px;border-radius:980px;background:#e8f1fd;color:var(--accent);margin-left:6px;vertical-align:2px}
+  .role{display:inline-block;font-size:12.5px;padding:1px 10px;border-radius:980px;background:#e8f1fd;color:var(--accent);margin-left:6px;vertical-align:2px}
 
-  /* 課程單元 */
-  .unit-bar{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;margin-bottom:34px}
-  .seg{display:inline-flex;background:#e8e8ed;border-radius:12px;padding:3px}
-  .seg button{font:inherit;font-size:15px;border:0;background:none;padding:7px 18px;border-radius:9px;cursor:pointer;color:var(--ink)}
-  .seg button.on{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12);font-weight:600}
-  .seg-label{font-size:14px;color:var(--sub);margin-right:4px}
-  .units{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
-  .unit{background:#fff;border-radius:22px;padding:26px 26px 22px;display:flex;flex-direction:column}
-  .unit .no{font-size:13px;font-weight:700;color:#fff;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:14px}
-  .unit h3{font-size:21px;margin:0 0 4px;line-height:1.35}
-  .unit .topic{font-size:13px;color:var(--sub);margin-bottom:14px}
-  .unit ul{list-style:none;margin:auto 0 0;padding:14px 0 0;border-top:1px solid #ececf0}
-  .unit li{font-size:14.5px;padding:4px 0;display:flex;gap:8px;align-items:baseline}
-  .unit li .ty{flex:none;font-size:12px;padding:0 8px;border-radius:980px;background:var(--bg);color:var(--sub)}
-  .unit li .wip{color:#b25e00;font-size:12px;flex:none}
-  .unit li.none{color:#a1a1a6}
-  .unit-note{text-align:center;color:var(--sub);font-size:13px;margin-top:22px}
+  footer{background:var(--bg);color:var(--sub);font-size:12.5px;padding:22px 24px;border-top:1px solid var(--line)}
+  footer .in{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 
-  /* 聯絡 */
-  .contact{text-align:center}
-  .contact .btns{margin-top:10px}
-
-  footer{background:var(--bg);color:var(--sub);font-size:12px;padding:20px 22px;border-top:1px solid var(--line)}
-  footer .in{max-width:1024px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-
-  .reveal{opacity:0;transform:translateY(30px);transition:opacity .9s ease,transform .9s ease}
-  .reveal.in{opacity:1;transform:none}
-  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
-
-  @media (max-width:820px){
-    .bento{grid-template-columns:1fr}
-    .s2,.s3,.s4,.s6{grid-column:span 1}
-    nav .links{display:none;position:absolute;top:48px;left:0;right:0;flex-direction:column;gap:0;background:rgba(251,251,253,.97);padding:6px 22px 14px;border-bottom:1px solid var(--line)}
-    nav .links.open{display:flex}
-    nav .links a{font-size:17px;padding:10px 0}
+  @media (max-width:1060px){ .menu{gap:18px} .menu a{font-size:14px} }
+  @media (max-width:940px){
     .burger{display:block}
-    .wrap{padding:70px 20px}
+    .menu{display:none;position:absolute;top:64px;left:0;right:0;flex-direction:column;align-items:flex-start;gap:0;background:var(--bar);padding:6px 24px 18px}
+    .menu.open{display:flex}
+    .menu a{padding:12px 0;width:100%;border-bottom:1px solid #333;font-size:17px}
+    .menu a.cta{width:auto;margin-top:14px;border:0}
+    .lang{margin:14px 0 0}
+    .hero .in{grid-template-columns:1fr;padding:46px 22px 150px;text-align:left}
+    .hero-tree{justify-self:center;max-width:340px}
+    .hero-left{flex-direction:column;align-items:flex-start;gap:16px}
+    .hero-logo{width:110px;height:110px}
+    .bento{grid-template-columns:1fr}.s2,.s3,.s4,.s6{grid-column:span 1}
+    .wrap{padding:60px 20px}
   }
+  @media (prefers-reduced-motion:reduce){.page.show{animation:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 
-<!-- 黃色底的文字＝請換成你的資料。全部換完後，可以刪掉 .todo 那一行樣式。 -->
+<!-- 黃色底的文字＝請換成你的資料。文字內容集中在下方程式的 TEXT（中英對照）。 -->
 
-<nav>
+<nav class="topbar">
   <div class="in">
-    <a class="logo" href="#top">jenbio</a>
-    <button class="burger" id="burger" aria-label="選單">☰</button>
-    <div class="links" id="links">
-      <a href="#about">關於我</a>
-      <a href="#apple">Apple 教學</a>
-      <a href="#units">課程單元</a>
-      <a href="#works">教學作品</a>
-      <a href="#talks">研習與分享</a>
-      <a href="#contact">聯絡</a>
-    </div>
+    <a class="brand" href="#overview">jenbio</a>
+    <button class="burger" id="burger" aria-label="Menu">☰</button>
+    <div class="menu" id="menu"></div>
   </div>
 </nav>
 
-<!-- ===== 主視覺 ===== -->
-<header class="hero" id="top">
-  <div class="avatar">J</div>
-  <h1>jenbio</h1>
-  <p class="tag">讓生物課，在 iPad 上活起來。</p>
-  <p>國中生物老師。用 iPad 與 Mac 設計探究式課程，<br>讓學生像科學家一樣提問、觀察、找證據。</p>
-  <div class="btns">
-    <a class="btn" href="#works">看教學作品</a>
-    <a class="btn link" href="#contact">與我聯絡 ›</a>
-  </div>
-</header>
-
-<!-- ===== 關於我 ===== -->
-<section class="grey" id="about">
-  <div class="wrap">
-    <h2 class="t reveal">關於我</h2>
-    <p class="l reveal">相信好的提問，比標準答案更重要。</p>
-    <div class="bento">
-      <div class="tile s4 reveal">
-        <p class="k">現職</p>
-        <h3><span class="todo">○○國中</span>・生物教師</h3>
-        <p><span class="todo">在這裡寫兩三句自我介紹：教學年資、教學理念、平常的課堂樣貌。</span></p>
+<!-- ================= 1. 概覽 Overview ================= -->
+<section class="page" id="overview">
+  <header class="hero">
+    <div class="in">
+      <div class="hero-left">
+        <!-- 原創標誌 -->
+        <svg class="hero-logo" viewBox="0 0 200 200" aria-hidden="true">
+          <g opacity=".92">
+            <circle cx="100" cy="22" r="13" fill="#34c759"/><circle cx="140" cy="32" r="11" fill="#0071e3"/><circle cx="170" cy="60" r="14" fill="#af52de"/>
+            <circle cx="180" cy="100" r="11" fill="#ff9f0a"/><circle cx="170" cy="140" r="14" fill="#ff375f"/><circle cx="140" cy="170" r="11" fill="#30b0c7"/>
+            <circle cx="100" cy="180" r="13" fill="#ffd60a"/><circle cx="60" cy="170" r="11" fill="#34c759"/><circle cx="30" cy="140" r="14" fill="#0071e3"/>
+            <circle cx="20" cy="100" r="11" fill="#ff9f0a"/><circle cx="30" cy="60" r="14" fill="#ff375f"/><circle cx="60" cy="32" r="11" fill="#af52de"/>
+            <circle cx="120" cy="14" r="6" fill="#ffd60a"/><circle cx="186" cy="80" r="6" fill="#34c759"/><circle cx="160" cy="160" r="6" fill="#0071e3"/>
+            <circle cx="80" cy="188" r="6" fill="#ff375f"/><circle cx="14" cy="120" r="6" fill="#af52de"/><circle cx="42" cy="42" r="6" fill="#30b0c7"/>
+          </g>
+          <circle cx="100" cy="100" r="64" fill="#fff" stroke="#e5e5ea" stroke-width="3"/>
+          <path d="M100 58c22 8 30 30 18 52-6 11-16 17-18 30-2-13-12-19-18-30-12-22-4-44 18-52z" fill="#3e9b6b"/>
+          <path d="M100 66v68M100 88l-12-9M100 88l12-9M100 104l-14-10M100 104l14-10M100 120l-11-8M100 120l11-8" stroke="#eaf7ee" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <text x="100" y="152" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-weight="800" font-size="20" fill="#1d1d1f">jenbio</text>
+        </svg>
+        <div>
+          <h1 data-t="heroTitle"></h1>
+          <p class="tag" data-t="heroTag"></p>
+        </div>
       </div>
-      <div class="tile s2 reveal">
-        <p class="k">教學年資</p>
-        <div class="big"><span class="todo" style="-webkit-text-fill-color:#8a5a00">??</span></div>
-        <p>年</p>
-      </div>
-      <div class="tile dark s3 reveal">
-        <p class="k">正在進行</p>
-        <h3>皮倫特星球探究式對話影片</h3>
-        <p>為教育部因材網製作的國中生物影片系列，透過角色對話示範科學探究。</p>
-      </div>
-      <div class="tile s3 reveal">
-        <p class="k">專長</p>
-        <h3>探究式教學・數位教材設計</h3>
-        <p>素養導向命題、科學探究課程、教學影片腳本與製作。</p>
-      </div>
+      <!-- 原創插圖：由生物圖示組成的樹 -->
+      <svg class="hero-tree" viewBox="0 0 480 520" aria-hidden="true">
+        <path d="M228 520 L240 250 L252 520 Z" fill="#b8864b"/>
+        <g fill="#8ccf7e"><circle cx="240" cy="190" r="150"/><circle cx="130" cy="250" r="95"/><circle cx="350" cy="250" r="95"/><circle cx="170" cy="110" r="80"/><circle cx="320" cy="110" r="80"/></g>
+        <g fill="#b9e08a" opacity=".75"><circle cx="200" cy="300" r="70"/><circle cx="300" cy="300" r="60"/><circle cx="250" cy="70" r="55"/></g>
+        <g stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <!-- 葉子 -->
+          <circle cx="250" cy="60" r="40" fill="#34c759" stroke="#fff" stroke-width="6"/>
+          <path d="M232 76c0-24 14-36 34-38 0 22-12 36-34 38zM232 76l20-20"/>
+          <!-- DNA -->
+          <circle cx="160" cy="105" r="40" fill="#5e5ce6" stroke="#fff" stroke-width="6"/>
+          <path d="M146 80c28 16 0 34 28 50M174 80c-28 16 0 34-28 50M150 92h20M150 118h20"/>
+          <!-- 顯微鏡 -->
+          <circle cx="340" cy="105" r="40" fill="#ff9f0a" stroke="#fff" stroke-width="6"/>
+          <path d="M332 82l14 26M326 86l10-6M330 124h26M343 124v-8M346 108c8 0 12 6 10 14"/>
+          <!-- 細胞 -->
+          <circle cx="95" cy="215" r="40" fill="#ff6b6b" stroke="#fff" stroke-width="6"/>
+          <ellipse cx="95" cy="215" rx="22" ry="17"/><circle cx="99" cy="212" r="6" fill="#fff"/>
+          <!-- 心臟 -->
+          <circle cx="240" cy="180" r="44" fill="#ff375f" stroke="#fff" stroke-width="6"/>
+          <path d="M240 202c-24-14-26-32-14-38 7-3 12 1 14 6 2-5 7-9 14-6 12 6 10 24-14 38z"/>
+          <!-- 燒瓶 -->
+          <circle cx="385" cy="215" r="40" fill="#30b0c7" stroke="#fff" stroke-width="6"/>
+          <path d="M378 192v14l-14 24h42l-14-24v-14M374 192h22M370 222h30"/>
+          <!-- 蝴蝶 -->
+          <circle cx="150" cy="310" r="40" fill="#af52de" stroke="#fff" stroke-width="6"/>
+          <path d="M150 296v28M150 304c-6-14-22-14-20-2 2 8 12 8 20 4M150 304c6-14 22-14 20-2-2 8-12 8-20 4M150 312c-4 8-14 10-14 4M150 312c4 8 14 10 14 4"/>
+          <!-- 放大鏡 -->
+          <circle cx="330" cy="310" r="40" fill="#0071e3" stroke="#fff" stroke-width="6"/>
+          <circle cx="325" cy="305" r="12"/><path d="M334 314l12 12"/>
+          <!-- 魚 -->
+          <circle cx="240" cy="290" r="34" fill="#ffd60a" stroke="#fff" stroke-width="6"/>
+          <path d="M222 290c10-12 26-12 34 0-8 12-24 12-34 0zM256 290l10-8v16z"/><circle cx="234" cy="288" r="1.5" fill="#fff"/>
+          <!-- 花 -->
+          <circle cx="85" cy="320" r="30" fill="#ff9fb3" stroke="#fff" stroke-width="5"/>
+          <circle cx="85" cy="318" r="5" fill="#fff"/><path d="M85 306v-4M85 330v4M73 318h-4M97 318h4M77 310l-3-3M93 310l3-3M77 326l-3 3M93 326l3 3"/>
+          <!-- 蕈類 -->
+          <circle cx="395" cy="320" r="30" fill="#a2845e" stroke="#fff" stroke-width="5"/>
+          <path d="M378 318c2-14 32-14 34 0zM391 318v14h8v-14"/>
+        </g>
+      </svg>
     </div>
-  </div>
+    <svg class="hills" viewBox="0 0 1440 260" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 120 C 360 40 700 60 1000 140 C 1200 190 1340 130 1440 90 L1440 260 L0 260 Z" fill="#f3e8e2"/>
+      <path d="M0 170 C 300 110 650 120 980 190 C 1200 235 1350 170 1440 140 L1440 260 L0 260 Z" fill="#d9ecd3"/>
+      <circle cx="760" cy="70" r="12" fill="#c6e07a"/><circle cx="860" cy="110" r="8" fill="#2e8b57"/><circle cx="960" cy="60" r="16" fill="#c6e07a"/><circle cx="1040" cy="120" r="14" fill="#e3e33a"/>
+    </svg>
+  </header>
+  <div class="grey"><div class="wrap">
+    <h2 class="t" data-t="ovTitle"></h2>
+    <p class="l" data-t="ovLead"></p>
+    <div class="cards" id="ovCards"></div>
+  </div></div>
 </section>
 
-<!-- ===== Apple 教學 ===== -->
-<section id="apple">
-  <div class="wrap">
-    <h2 class="t reveal">用 Apple 科技教學</h2>
-    <p class="l reveal">把 iPad 變成學生的顯微鏡、筆記本與發表舞台。</p>
+<!-- ================= 2. 教師簡介 About Me ================= -->
+<section class="page" id="about">
+  <div class="page-head"><p class="eyebrow" data-t="aboutEyebrow"></p><h2 class="t" data-t="aboutTitle"></h2><p class="l" data-t="aboutLead"></p></div>
+  <div class="grey"><div class="wrap">
     <div class="bento">
-      <div class="tile s6 reveal" style="background:var(--bg)">
-        <p class="k">認證與社群</p>
-        <h3>持續學習，也和老師們一起成長</h3>
-        <p>只保留你實際取得的項目，沒有的請刪掉那一行。</p>
+      <div class="tile s4"><p class="k" data-t="aboutNowK"></p><h3 data-t="aboutNowH"></h3><p data-t="aboutNowP"></p></div>
+      <div class="tile s2"><p class="k" data-t="aboutYearsK"></p><div class="big"><span class="todo">??</span></div><p data-t="aboutYearsU"></p></div>
+      <div class="tile dark s3"><p class="k" data-t="aboutProjK"></p><h3 data-t="aboutProjH"></h3><p data-t="aboutProjP"></p></div>
+      <div class="tile s3"><p class="k" data-t="aboutSkillK"></p><h3 data-t="aboutSkillH"></h3><p data-t="aboutSkillP"></p></div>
+      <div class="tile s6"><p class="k" data-t="aboutCertK"></p><h3 data-t="aboutCertH"></h3><p data-t="aboutCertP"></p>
         <div class="badges">
           <div class="badge"><i style="background:#0071e3">T</i><span class="todo">Apple Teacher</span></div>
-          <div class="badge"><i style="background:#34c759">S</i><span class="todo">蘋果種子教師</span></div>
+          <div class="badge"><i style="background:#34c759">S</i><span class="todo" data-t="certSeed"></span></div>
           <div class="badge"><i style="background:#ff9f0a">L</i><span class="todo">Apple Learning Coach</span></div>
           <div class="badge"><i style="background:#af52de">D</i><span class="todo">Apple Distinguished Educator</span></div>
         </div>
       </div>
-      <div class="tile s6 reveal" style="background:var(--bg)">
-        <p class="k">課堂常用 App</p>
-        <h3>我的教學工具箱</h3>
-        <div class="apps">
-          <div class="app"><div class="ic" style="background:linear-gradient(135deg,#5ac8fa,#0071e3)">K</div>Keynote</div>
-          <div class="app"><div class="ic" style="background:linear-gradient(135deg,#ffcc00,#ff9500)">P</div>Pages</div>
-          <div class="app"><div class="ic" style="background:linear-gradient(135deg,#34c759,#248a3d)">N</div>Numbers</div>
-          <div class="app"><div class="ic" style="background:linear-gradient(135deg,#ff6b6b,#ff2d55)">C</div>Clips</div>
-          <div class="app"><div class="ic" style="background:linear-gradient(135deg,#bf5af2,#5e5ce6)">F</div>Freeform</div>
-          <div class="app"><div class="ic" style="background:linear-gradient(135deg,#8e8e93,#48484a)">相</div>相機・顯微攝影</div>
-        </div>
-      </div>
     </div>
-  </div>
+  </div></div>
 </section>
 
-<!-- ===== 課程單元（單元資料與教學資源在最下方程式的 UNITS、RESOURCES 修改） ===== -->
-<section class="grey" id="units">
-  <div class="wrap">
-    <h2 class="t reveal">課程單元</h2>
-    <p class="l reveal">選擇課本版本與學期，找到對應單元的教學資源。</p>
+<!-- ================= 3. 探究影片 Inquiry Videos ================= -->
+<section class="page" id="videos">
+  <div class="page-head"><p class="eyebrow" data-t="vidEyebrow"></p><h2 class="t" data-t="vidTitle"></h2><p class="l" data-t="vidLead"></p></div>
+  <div class="grey"><div class="wrap">
+    <div class="vids" id="vidGrid"></div>
+    <div class="center"><a class="btn" href="https://jenbiosite.xbbjenbio.workers.dev" target="_blank" rel="noopener" data-t="vidSite"></a></div>
+  </div></div>
+</section>
+
+<!-- ================= 4. 課程單元 Curriculum ================= -->
+<section class="page" id="curriculum">
+  <div class="page-head"><p class="eyebrow" data-t="curEyebrow"></p><h2 class="t" data-t="curTitle"></h2><p class="l" data-t="curLead"></p></div>
+  <div class="grey"><div class="wrap">
     <div class="unit-bar">
-      <span><span class="seg-label">版本</span><span class="seg" id="segPub"></span></span>
-      <span><span class="seg-label">學期</span><span class="seg" id="segSem"></span></span>
+      <span><span class="seg-label" data-t="curPub"></span><span class="seg" id="segPub"></span></span>
+      <span><span class="seg-label" data-t="curSem"></span><span class="seg" id="segSem"></span></span>
     </div>
+    <p class="unit-sub" data-t="curSub"></p>
     <div class="units" id="unitGrid"></div>
-    <p class="unit-note">章名依 112–113 學年度課本整理，各校使用的版次可能不同，請以手上課本為準。</p>
-  </div>
+    <p class="note" data-t="curNote"></p>
+  </div></div>
 </section>
 
-<!-- ===== 教學作品 ===== -->
-<section id="works">
-  <div class="wrap">
-    <h2 class="t reveal">教學作品</h2>
-    <p class="l reveal">從一支影片、一份教案，到一整套課程。</p>
-    <div class="works">
-      <a class="work reveal" href="https://jenbiosite.xbbjenbio.workers.dev" target="_blank" rel="noopener">
-        <div class="pic" style="background:linear-gradient(135deg,#34a853,#0f7a43)">皮倫特星球</div>
-        <div class="body"><h3>國中生物探究式對話影片</h3><p>教育部因材網影片系列，跟著四位角色一起探究生物觀念。</p><span class="more">前往網站 ›</span></div>
-      </a>
-      <div class="work reveal">
-        <div class="pic" style="background:linear-gradient(135deg,#5ac8fa,#0071e3)"><span class="todo">作品名稱</span></div>
-        <div class="body"><h3><span class="todo">iPad 課程設計範例</span></h3><p><span class="todo">一句話介紹這個作品。</span></p></div>
-      </div>
-      <div class="work reveal">
-        <div class="pic" style="background:linear-gradient(135deg,#ffcc00,#ff9500)"><span class="todo">作品名稱</span></div>
-        <div class="body"><h3><span class="todo">素養導向評量／學習單</span></h3><p><span class="todo">一句話介紹這個作品。</span></p></div>
-      </div>
-    </div>
-  </div>
+<!-- ================= 5. 互動學習 Learning Games ================= -->
+<section class="page" id="games">
+  <div class="page-head"><p class="eyebrow" data-t="gameEyebrow"></p><h2 class="t" data-t="gameTitle"></h2><p class="l" data-t="gameLead"></p></div>
+  <div class="grey"><div class="wrap"><div class="cards" id="gameCards"></div></div></div>
 </section>
 
-<!-- ===== 研習與分享（新的放最上面） ===== -->
-<section class="grey" id="talks">
-  <div class="wrap">
-    <h2 class="t reveal">研習與分享</h2>
-    <p class="l reveal">分享課堂裡的嘗試，也向其他老師學習。</p>
-    <div class="timeline">
-      <div class="ev reveal"><div class="d"><span class="todo">2026.11</span></div><h3><span class="todo">研習或工作坊名稱</span><span class="role">講師</span></h3><p><span class="todo">主辦單位・分享的主題</span></p></div>
-      <div class="ev reveal"><div class="d"><span class="todo">2026.09</span></div><h3><span class="todo">研習或工作坊名稱</span><span class="role">參與</span></h3><p><span class="todo">主辦單位・學到的重點</span></p></div>
-      <div class="ev reveal"><div class="d"><span class="todo">2026.06</span></div><h3><span class="todo">研習或工作坊名稱</span><span class="role">講師</span></h3><p><span class="todo">主辦單位・分享的主題</span></p></div>
-    </div>
-  </div>
+<!-- ================= 6. 數位教學 Digital Teaching ================= -->
+<section class="page" id="digital">
+  <div class="page-head"><p class="eyebrow" data-t="digEyebrow"></p><h2 class="t" data-t="digTitle"></h2><p class="l" data-t="digLead"></p></div>
+  <div class="grey"><div class="wrap"><div class="apps" id="appGrid"></div></div></div>
 </section>
 
-<!-- ===== 聯絡 ===== -->
-<section id="contact">
-  <div class="wrap contact">
-    <h2 class="t reveal">一起讓課堂更好玩。</h2>
-    <p class="l reveal" style="margin-bottom:24px">歡迎邀請分享、交流教學，或聊聊科學探究。</p>
-    <div class="btns reveal">
-      <a class="btn" href="mailto:your-email@example.com">寄信給我</a>
-      <a class="btn link" href="#" target="_blank" rel="noopener">Facebook ›</a>
-    </div>
-    <p class="reveal" style="color:var(--sub);font-size:14px;margin-top:18px"><span class="todo">把 your-email@example.com 換成想公開的信箱；不需要的按鈕可以刪掉。</span></p>
-  </div>
+<!-- ================= 7. 研習與分享 Talks & Workshops ================= -->
+<section class="page" id="talks">
+  <div class="page-head"><p class="eyebrow" data-t="talkEyebrow"></p><h2 class="t" data-t="talkTitle"></h2><p class="l" data-t="talkLead"></p></div>
+  <div class="grey"><div class="wrap"><div class="timeline" id="talkList"></div></div></div>
 </section>
 
-<footer>
-  <div class="in"><span>© 2026 jenbio</span><span>本網站為個人網站，與 Apple Inc. 無隸屬關係。</span></div>
-</footer>
+<!-- ================= 聯絡 Contact ================= -->
+<section class="page" id="contact">
+  <div class="page-head"><p class="eyebrow" data-t="conEyebrow"></p><h2 class="t" data-t="conTitle"></h2><p class="l" data-t="conLead"></p></div>
+  <div class="grey"><div class="wrap" style="text-align:center">
+    <a class="btn" href="mailto:your-email@example.com" data-t="conMail"></a>
+    <p style="color:var(--sub);font-size:14px;margin-top:18px"><span class="todo" data-t="conTodo"></span></p>
+  </div></div>
+</section>
+
+<footer><div class="in"><span>© 2026 jenbio</span><span data-t="footNote"></span></div></footer>
 
 <script>
-
 /* ============================================================
-   課程單元：版本 → 學期 → 單元。topic 用來對應下方的教學資源。
+   文字內容（中英對照）。要改文字就改這裡，左邊是英文、右邊是中文。
    ============================================================ */
-const UNITS = {
-  "康軒": {
-    "七上": [["生命的特性","life"],["養分","nutrition"],["生物的運輸與防禦","transport"],["生物的協調作用","coordination"],["生物的恆定性","homeostasis"]],
-    "七下": [["生殖","reproduction"],["遺傳","genetics"],["地球上的生物","diversity"],["生態系","ecology"],["人類與環境","environment"]]
-  },
-  "翰林": {
-    "七上": [["生命世界與科學方法","life"],["生物體的組成","life"],["生物體的營養","nutrition"],["生物體的運輸作用","transport"],["生物體的協調作用","coordination"],["生物體的恆定","homeostasis"]],
-    "七下": [["生殖","reproduction"],["遺傳","genetics"],["生物的演化與分類","diversity"],["生物與環境","ecology"],["生物多樣性與保育","environment"]]
-  },
-  "南一": {
-    "七上": [["生命的發現","life"],["生物體的營養","nutrition"],["生物體內的運輸","transport"],["生物體的協調作用","coordination"],["生物體內的恆定","homeostasis"]],
-    "七下": [["新生命的誕生","reproduction"],["遺傳","genetics"],["形形色色的生物","diversity"],["生物與環境的交互作用","ecology"],["人類與環境","environment"]]
-  }
-};
-const TOPIC = {
-  life:["細胞・生命現象","#34c759"], nutrition:["養分・酵素・光合作用","#ff9f0a"], transport:["植物與動物的運輸","#30b0c7"],
-  coordination:["神經・內分泌・感應","#af52de"], homeostasis:["呼吸・排泄・體溫・血糖","#0071e3"], reproduction:["細胞分裂・生殖","#ff375f"],
-  genetics:["遺傳・突變・生物技術","#5e5ce6"], diversity:["演化・化石・分類","#a2845e"], ecology:["生態系・能量流動","#28a745"], environment:["生物多樣性・保育","#64a95c"]
-};
-/* 教學資源：type 例如 影片／學習單／遊戲／小考；url 沒有就留空 ""；wip:true 會標「製作中」 */
-const RESOURCES = {
-  transport: [
-    {type:"影片", title:"秘密通道：木質部的單行道任務", url:"https://jenbiosite.xbbjenbio.workers.dev"},
-    {type:"影片", title:"葉子裡的路網：絲巾上的葉脈密碼", url:"", wip:true},
-    {type:"影片", title:"植物體內的水分運輸", url:"", wip:true}
-  ],
-  coordination: [{type:"影片", title:"接尺挑戰：反應時間有多快？", url:"", wip:true}],
-  homeostasis: [{type:"影片", title:"黃色警報：地球人的尿為什麼有深有淺？", url:"", wip:true}],
-  diversity: [
-    {type:"影片", title:"墾丁有『鯨』喜：為何墾丁有鯨魚化石？", url:"", wip:true},
-    {type:"影片", title:"走…我們去當科學家", url:"", wip:true}
-  ],
-  ecology: [{type:"影片", title:"能量的單行道：越往上越少的秘密", url:"", wip:true}]
+const TODO = (en, zh) => ({en:`<span class="todo">${en}</span>`, zh:`<span class="todo">${zh}</span>`});
+const TEXT = {
+  heroTitle:{en:"Biology,<br>by Inquiry", zh:"生物，<br>從探究開始"},
+  heroTag:{en:"Think like a scientist — ask, observe, find evidence.", zh:"像科學家一樣思考：提問、觀察、找證據。"},
+  ovTitle:{en:"Welcome to jenbio.", zh:"歡迎來到 jenbio。"},
+  ovLead:{en:"A junior high biology teacher from Taiwan, designing inquiry-based lessons, videos and digital learning tools.", zh:"來自臺灣的國中生物老師，設計探究式課程、教學影片與數位學習工具。"},
+
+  aboutEyebrow:{en:"About Me", zh:"教師簡介"},
+  aboutTitle:{en:"Good questions matter more than right answers.", zh:"好的提問，比標準答案更重要。"},
+  aboutLead:{en:"Teaching junior high biology in Taiwan.", zh:"在臺灣教國中生物。"},
+  aboutNowK:{en:"Currently", zh:"現職"},
+  aboutNowH:TODO("Biology Teacher, ○○ Junior High School","○○國中・生物教師"),
+  aboutNowP:TODO("Write two or three sentences about your teaching: years, beliefs, and what your classroom looks like.","寫兩三句自我介紹：教學年資、教學理念、平常的課堂樣貌。"),
+  aboutYearsK:{en:"Teaching", zh:"教學年資"},
+  aboutYearsU:{en:"years", zh:"年"},
+  aboutProjK:{en:"Ongoing project", zh:"正在進行"},
+  aboutProjH:{en:"Planet Pilent Inquiry Videos", zh:"皮倫特星球探究式對話影片"},
+  aboutProjP:{en:"A biology video series for Taiwan's Ministry of Education adaptive learning platform (因材網), modeling scientific inquiry through character dialogue.", zh:"為教育部因材網製作的國中生物影片系列，透過角色對話示範科學探究。"},
+  aboutSkillK:{en:"Expertise", zh:"專長"},
+  aboutSkillH:{en:"Inquiry teaching · Digital materials", zh:"探究式教學・數位教材設計"},
+  aboutSkillP:{en:"Competency-based assessment, inquiry lesson design, video scripting and production.", zh:"素養導向命題、科學探究課程、教學影片腳本與製作。"},
+  aboutCertK:{en:"Certifications & communities", zh:"認證與社群"},
+  aboutCertH:{en:"Always learning, together with other teachers", zh:"持續學習，也和老師們一起成長"},
+  aboutCertP:TODO("Keep only the ones you actually hold and delete the rest.","只保留實際取得的項目，沒有的請刪掉。"),
+  certSeed:{en:"Apple Seeding Teacher (Taiwan)", zh:"蘋果種子教師"},
+
+  vidEyebrow:{en:"Inquiry Videos", zh:"探究影片"},
+  vidTitle:{en:"Planet Pilent", zh:"皮倫特星球"},
+  vidLead:{en:"Four characters from Planet Pilent ask, guess, test and revise — showing students how scientists really think. Videos are in Mandarin with Traditional Chinese subtitles.", zh:"跟著皮倫特星球的四位角色提問、猜想、驗證、修正，看見科學家真正的思考方式。"},
+  vidSite:{en:"Visit the series website ›", zh:"前往影片系列網站 ›"},
+
+  curEyebrow:{en:"Curriculum", zh:"課程單元"},
+  curTitle:{en:"Grade 7 Biology", zh:"七年級生物"},
+  curLead:{en:"Find resources by textbook publisher and semester.", zh:"選擇課本版本與學期，找到對應單元的教學資源。"},
+  curPub:{en:"Publisher", zh:"版本"},
+  curSem:{en:"Semester", zh:"學期"},
+  curSub:{en:"Taiwan Junior High School Biology · Grade 7 (108 Curriculum Guidelines)", zh:"國中自然・生物（108 課綱）"},
+  curNote:{en:"Chapter titles follow the 2023–2024 textbook editions; English titles are translations.", zh:"章名依 112–113 學年度課本整理，各校使用的版次可能不同，請以手上課本為準。"},
+
+  gameEyebrow:{en:"Learning Games", zh:"互動學習"},
+  gameTitle:{en:"Learn by playing.", zh:"玩中學。"},
+  gameLead:{en:"Quest games, online quizzes and AI-supported inquiry activities for the iPad classroom.", zh:"為 iPad 課堂設計的闖關遊戲、線上測驗與 AI 探究活動。"},
+
+  digEyebrow:{en:"Digital Teaching", zh:"數位教學"},
+  digTitle:{en:"Biology class, alive on iPad.", zh:"讓生物課，在 iPad 上活起來。"},
+  digLead:{en:"Turning the iPad into students' microscope, notebook and stage.", zh:"把 iPad 變成學生的顯微鏡、筆記本與發表舞台。"},
+
+  talkEyebrow:{en:"Talks & Workshops", zh:"研習與分享"},
+  talkTitle:{en:"Sharing what works in class.", zh:"分享課堂裡的嘗試。"},
+  talkLead:{en:"Workshops I've led and learned from.", zh:"我主講與參與過的研習。"},
+
+  conEyebrow:{en:"Contact", zh:"聯絡我"},
+  conTitle:{en:"Let's make classrooms better together.", zh:"一起讓課堂更好玩。"},
+  conLead:{en:"Invitations to share, teaching exchanges, or just a chat about scientific inquiry are all welcome.", zh:"歡迎邀請分享、交流教學，或聊聊科學探究。"},
+  conMail:{en:"Email me", zh:"寄信給我"},
+  conTodo:{en:"Replace your-email@example.com with the address you want to make public.", zh:"把 your-email@example.com 換成想公開的信箱。"},
+  footNote:{en:"Personal website. Not affiliated with Apple Inc.", zh:"本網站為個人網站，與 Apple Inc. 無隸屬關係。"}
 };
 
+/* 橫欄：id 對應上面各頁 section 的 id */
+const NAV = [
+  ["overview",{en:"Overview",zh:"概覽"}],
+  ["about",{en:"About Me",zh:"教師簡介"}],
+  ["videos",{en:"Inquiry Videos",zh:"探究影片"}],
+  ["curriculum",{en:"Curriculum",zh:"課程單元"}],
+  ["games",{en:"Learning Games",zh:"互動學習"}],
+  ["digital",{en:"Digital Teaching",zh:"數位教學"}],
+  ["talks",{en:"Talks & Workshops",zh:"研習與分享"}]
+];
+const CTA = ["contact",{en:"Contact",zh:"聯絡我"}];
+
+/* 概覽頁的入口卡片 */
+const ICONS = {
+  about:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+  videos:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z" fill="#fff"/>',
+  curriculum:'<path d="M4 5h7v14H4zM13 5h7v14h-7z"/>',
+  games:'<rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4M16 12h.01M18 14h.01"/>',
+  digital:'<rect x="5" y="3" width="14" height="18" rx="3"/><path d="M11 18h2"/>',
+  talks:'<path d="M12 3v10M8 9a4 4 0 008 0M12 17v4M8 21h8"/>'
+};
+const OVCARDS = [
+  ["about","#2e8b57",{en:"Who I am and how I teach.",zh:"我是誰，我怎麼教。"}],
+  ["videos","#ff375f",{en:"Inquiry-dialogue videos from Planet Pilent.",zh:"皮倫特星球探究式對話影片。"}],
+  ["curriculum","#0071e3",{en:"Resources by chapter, for every publisher.",zh:"依版本與章節找教學資源。"}],
+  ["games","#af52de",{en:"Quest games and quizzes for iPad.",zh:"iPad 闖關遊戲與線上測驗。"}],
+  ["digital","#ff9f0a",{en:"Apple tools in the biology classroom.",zh:"Apple 工具在生物課的應用。"}],
+  ["talks","#30b0c7",{en:"Workshops and talks.",zh:"研習與演講紀錄。"}]
+];
+
+/* 影片要公開時，把 false 改成 true（影片頁與課程單元都會顯示片名） */
+const SHOW_VIDEOS = false;
+
+/* 影片清單 */
+const VIDEOS = [
+  {code:"Db-Ⅳ-6-3", done:true, col:"#0f9d58", en:"Secret Passage: The Xylem's One-Way Mission", zh:"秘密通道：木質部的單行道任務", den:"How does water travel up a plant?", dzh:"水分在植物體內怎麼往上走？"},
+  {code:"Db-Ⅳ-6-2", col:"#0f9d58", en:"Roads Inside a Leaf: The Vein Code on a Silk Scarf", zh:"葉子裡的路網：絲巾上的葉脈密碼", den:"Why do maple and bamboo leaves print different patterns?", dzh:"楓葉和竹葉的紋路為什麼不一樣？"},
+  {code:"Db-Ⅳ-6-4", col:"#0f9d58", en:"Water Transport in Plants (title TBD)", zh:"植物體內的水分運輸（片名待定）", den:"A two-color flower experiment reveals water's path in the stem.", dzh:"用雙色白花實驗，看見水分在莖裡的路線。"},
+  {code:"Bd-Ⅳ-1-2", col:"#e37400", en:"Energy's One-Way Street: Why Less Goes Up", zh:"能量的單行道：越往上越少的秘密", den:"Why does energy shrink along a food chain?", dzh:"能量為什麼越往食物鏈上層越少？"},
+  {code:"Dc-Ⅳ-4-8", col:"#1a56b8", en:"Yellow Alert: Why Is Hikers' Urine Light or Dark?", zh:"黃色警報：登山客的尿為什麼有深有淺？", den:"Sweat, water and the kidneys on a mountain hike.", dzh:"從登山的尿色觀察，認識人體的水分恆定。"},
+  {code:"Dc-Ⅳ-1", col:"#7b2cbf", en:"The Ruler-Drop Challenge: How Fast Do You React?", zh:"接尺挑戰：反應時間有多快？", den:"Measuring reaction time at a school fair booth.", dzh:"園遊會的接尺遊戲，量出反應時間。"},
+  {code:"Gb-Ⅳ-1-1", col:"#6d4c41", en:"A Whale of a Surprise: Whale Fossils in Kenting", zh:"墾丁有『鯨』喜：為何墾丁有鯨魚化石？", den:"A sand-cup model of how fossils form.", dzh:"用沙杯模擬，理解化石如何形成。"},
+  {code:"Gb-Ⅳ-1-2", col:"#6d4c41", en:"Let's Go Be Paleontologists!", zh:"走…我們去當古生物學家", den:"Fossils as evidence — and why a 'living fossil' isn't one.", dzh:"化石是演化的證據，那「活化石」是化石嗎？"}
+];
+
+/* 課程單元：每章 [中文章名, 英文章名, 主題代碼] */
+const UNITS = {
+  "康軒":{en:"Kang Hsuan", "七上":[["生命的特性","Characteristics of Life","life"],["養分","Nutrients","nutrition"],["生物的運輸與防禦","Transport and Defense","transport"],["生物的協調作用","Coordination","coordination"],["生物的恆定性","Homeostasis","homeostasis"]],
+         "七下":[["生殖","Reproduction","reproduction"],["遺傳","Genetics","genetics"],["地球上的生物","Life on Earth","diversity"],["生態系","Ecosystems","ecology"],["人類與環境","Humans and the Environment","environment"]]},
+  "翰林":{en:"Han Lin", "七上":[["生命世界與科學方法","The Living World and Scientific Method","life"],["生物體的組成","Organization of Living Things","life"],["生物體的營養","Nutrition","nutrition"],["生物體的運輸作用","Transport","transport"],["生物體的協調作用","Coordination","coordination"],["生物體的恆定","Homeostasis","homeostasis"]],
+         "七下":[["生殖","Reproduction","reproduction"],["遺傳","Genetics","genetics"],["生物的演化與分類","Evolution and Classification","diversity"],["生物與環境","Organisms and the Environment","ecology"],["生物多樣性與保育","Biodiversity and Conservation","environment"]]},
+  "南一":{en:"Nan I", "七上":[["生命的發現","Discovering Life","life"],["生物體的營養","Nutrition","nutrition"],["生物體內的運輸","Transport in Organisms","transport"],["生物體的協調作用","Coordination","coordination"],["生物體內的恆定","Homeostasis","homeostasis"]],
+         "七下":[["新生命的誕生","The Birth of New Life","reproduction"],["遺傳","Genetics","genetics"],["形形色色的生物","The Diversity of Life","diversity"],["生物與環境的交互作用","Organisms and Their Environment","ecology"],["人類與環境","Humans and the Environment","environment"]]}
+};
+const SEM = {"七上":{en:"Grade 7 · Fall",zh:"七上"}, "七下":{en:"Grade 7 · Spring",zh:"七下"}};
+const TOPIC = {
+  life:["#34c759","Cells · life processes","細胞・生命現象"], nutrition:["#ff9f0a","Nutrients · enzymes · photosynthesis","養分・酵素・光合作用"],
+  transport:["#30b0c7","Transport in plants and animals","植物與動物的運輸"], coordination:["#af52de","Nervous & endocrine systems","神經・內分泌・感應"],
+  homeostasis:["#0071e3","Breathing · excretion · body temperature","呼吸・排泄・體溫・血糖"], reproduction:["#ff375f","Cell division · reproduction","細胞分裂・生殖"],
+  genetics:["#5e5ce6","Heredity · mutation · biotechnology","遺傳・突變・生物技術"], diversity:["#a2845e","Evolution · fossils · classification","演化・化石・分類"],
+  ecology:["#28a745","Ecosystems · energy flow","生態系・能量流動"], environment:["#64a95c","Biodiversity · conservation","生物多樣性・保育"]
+};
+/* 各主題的教學資源：v = VIDEOS 裡的編號（從 0 開始）；或自行加 {en,zh,url,type} */
+const RES = { transport:[0,1,2], ecology:[3], homeostasis:[4], coordination:[5], diversity:[6,7] };
+
+/* 互動學習（之後做好的遊戲放這裡；url 留空會顯示 Coming soon） */
+const GAMES = [
+  {col:"#af52de", en:"Growth Journey Quest", zh:"成長之旅闖關", den:"A four-stage quest from seed to fruit.", dzh:"從種子到結果的四階段闖關。", url:""},
+  {col:"#0071e3", en:"Unit Quest Games", zh:"單元闖關遊戲", den:"Timed challenges with check questions and a final test.", dzh:"限時關卡、檢核題與最後測驗。", url:""},
+  {col:"#ff9f0a", en:"Online Quizzes", zh:"線上小考", den:"Quick checks after each game, with class reports.", dzh:"闖關後的線上測驗與班級檢討報告。", url:""}
+];
+
+/* 數位教學 App */
+const APPS = [
+  ["K","linear-gradient(135deg,#5ac8fa,#0071e3)","Keynote","Animated diagrams and student presentations","動畫圖解與學生發表"],
+  ["P","linear-gradient(135deg,#ffcc00,#ff9500)","Pages","Lab reports and illustrated notes","實驗報告與圖文筆記"],
+  ["N","linear-gradient(135deg,#34c759,#248a3d)","Numbers","Recording data and drawing graphs","記錄數據與繪製圖表"],
+  ["C","linear-gradient(135deg,#ff6b6b,#ff2d55)","Clips","Short videos of experiments","實驗過程短片"],
+  ["F","linear-gradient(135deg,#bf5af2,#5e5ce6)","Freeform","Concept maps and group brainstorming","概念圖與小組腦力激盪"],
+  ["📷","linear-gradient(135deg,#8e8e93,#48484a)",{en:"Camera",zh:"相機"},"Microscope photography","顯微攝影"]
+];
+
+/* 研習與分享（新的放最上面）；role: "speaker" 講師 / "attendee" 參與 */
+const TALKS = [
+  {date:"2026.11", role:"speaker", en:"Character Dialogue Workshop", zh:"角色對話標記工作坊", den:"因材網 junior high biology team · monthly meetup", dzh:"因材網國中生物教材開發團隊・月聚"},
+  {date:"2026.09", role:"attendee", en:"[Workshop name]", zh:"［研習名稱］", den:"[Organizer · key takeaway]", dzh:"［主辦單位・學到的重點］", todo:true}
+];
+
+/* ============================================================ 程式 ============================================================ */
+const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let pub = "康軒", sem = "七上";
-try { const v = JSON.parse(localStorage.getItem("jenbio_units") || "{}"); if (UNITS[v.pub]) pub = v.pub; if (v.sem === "七上" || v.sem === "七下") sem = v.sem; } catch(e) {}
-function seg(el, opts, cur, fn){
-  el.innerHTML = opts.map(o => `<button class="${o===cur?"on":""}" data-v="${o}">${o}</button>`).join("");
+const store = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
+let lang = store.get("jenbio_lang") || "en";
+let pub = store.get("jenbio_pub") || "康軒";
+let sem = store.get("jenbio_sem") || "七上";
+if (!UNITS[pub]) pub = "康軒"; if (!SEM[sem]) sem = "七上";
+const L = o => (typeof o === "string" ? o : o[lang]);
+
+function renderNav(){
+  const cur = (location.hash || "#overview").slice(1);
+  $("#menu").innerHTML = NAV.map(([id,t]) => `<a href="#${id}" class="${cur===id?"on":""}">${L(t)}</a>`).join("")
+    + `<a href="#${CTA[0]}" class="cta">${L(CTA[1])}</a>`
+    + `<span class="lang"><button data-l="en" class="${lang==="en"?"on":""}">EN</button><button data-l="zh" class="${lang==="zh"?"on":""}">中</button></span>`;
+  $("#menu").querySelectorAll(".lang button").forEach(b => b.onclick = () => setLang(b.dataset.l));
+  $("#menu").querySelectorAll("a").forEach(a => a.onclick = () => $("#menu").classList.remove("open"));
+}
+function renderText(){
+  document.querySelectorAll("[data-t]").forEach(el => { const t = TEXT[el.dataset.t]; if (t) el.innerHTML = t[lang]; });
+  document.documentElement.lang = lang === "en" ? "en" : "zh-Hant";
+  document.title = lang === "en" ? "jenbio · Biology by Inquiry" : "jenbio・生物探究教室";
+}
+function renderOverview(){
+  $("#ovCards").innerHTML = OVCARDS.map(([id,col,d]) => {
+    const name = NAV.find(n => n[0]===id)[1];
+    return `<a class="card" href="#${id}"><div class="ic" style="background:${col}"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[id]}</svg></div><h3>${L(name)}</h3><p>${L(d)}</p><span class="go">${lang==="en"?"Learn more ›":"了解更多 ›"}</span></a>`;
+  }).join("");
+}
+function renderVideos(){
+  const btn = document.querySelector('[data-t="vidSite"]'); if (btn) btn.style.display = SHOW_VIDEOS ? "" : "none";
+  if (!SHOW_VIDEOS) {
+    $("#vidGrid").innerHTML = `<div class="vid" style="grid-column:1/-1;text-align:center"><div class="pic" style="justify-content:center;align-items:center;aspect-ratio:auto;padding:70px 20px;background:linear-gradient(135deg,#34c759,#0f7a43)"><span style="font-size:clamp(34px,6vw,60px);font-weight:700;letter-spacing:-.01em;position:relative;z-index:1">Coming soon</span><span class="bg">探</span></div><div class="body"><h3>${lang==="en"?"The first episodes are on their way.":"第一批影片即將推出。"}</h3><p>${lang==="en"?"Check back soon for the Planet Pilent inquiry video series.":"皮倫特星球探究影片系列，敬請期待。"}</p></div></div>`;
+    return;
+  }
+  $("#vidGrid").innerHTML = VIDEOS.map(v => `<div class="vid">
+    <div class="pic" style="background:linear-gradient(135deg,${v.col}cc,${v.col})"><span class="code">${esc(v.code)}</span><span class="bg">${esc(v.zh.slice(0,1))}</span></div>
+    <div class="body"><span class="chip ${v.done?"done":"wip"}">${v.done?(lang==="en"?"Released":"已完成"):(lang==="en"?"In production":"製作中")}</span>
+    <h3>${esc(lang==="en"?v.en:v.zh)}</h3><p>${esc(lang==="en"?v.den:v.dzh)}</p></div></div>`).join("");
+}
+function seg(el, opts, cur, label, fn){
+  el.innerHTML = opts.map(o => `<button class="${o===cur?"on":""}" data-v="${o}">${label(o)}</button>`).join("");
   el.querySelectorAll("button").forEach(b => b.onclick = () => fn(b.dataset.v));
 }
 function renderUnits(){
-  seg(document.getElementById("segPub"), Object.keys(UNITS), pub, v => { pub = v; saveUnits(); renderUnits(); });
-  seg(document.getElementById("segSem"), ["七上","七下"], sem, v => { sem = v; saveUnits(); renderUnits(); });
-  document.getElementById("unitGrid").innerHTML = UNITS[pub][sem].map(([name, key], i) => {
-    const [desc, col] = TOPIC[key]; const rs = RESOURCES[key] || [];
-    const list = rs.length ? rs.map(r => `<li><span class="ty">${esc(r.type)}</span>${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : `<span>${esc(r.title)}</span>`}${r.wip ? `<span class="wip">製作中</span>` : ""}</li>`).join("")
-                           : `<li class="none">教學資源準備中</li>`;
-    return `<div class="unit"><div class="no" style="background:${col}">${i+1}</div><h3>第 ${i+1} 章　${esc(name)}</h3><div class="topic">${esc(desc)}</div><ul>${list}</ul></div>`;
+  seg($("#segPub"), Object.keys(UNITS), pub, k => lang==="en" ? UNITS[k].en : k, v => { pub=v; store.set("jenbio_pub",v); renderUnits(); });
+  seg($("#segSem"), Object.keys(SEM), sem, k => L(SEM[k]), v => { sem=v; store.set("jenbio_sem",v); renderUnits(); });
+  $("#unitGrid").innerHTML = UNITS[pub][sem].map(([zh,en,key],i) => {
+    const [col,ten,tzh] = TOPIC[key];
+    const rs = SHOW_VIDEOS ? (RES[key]||[]).map(n => VIDEOS[n]) : [];
+    const list = rs.length ? rs.map(v => `<li><span class="ty">${lang==="en"?"Video":"影片"}</span><span>${esc(lang==="en"?v.en:v.zh)}</span>${v.done?"":`<span class="w">${lang==="en"?"soon":"製作中"}</span>`}</li>`).join("")
+                           : `<li class="none">Coming soon</li>`;
+    const title = lang==="en" ? `Ch. ${i+1}　${en}` : `第 ${i+1} 章　${zh}`;
+    const alt = lang==="en" ? zh : en;
+    return `<div class="unit"><div class="no" style="background:${col}">${i+1}</div><h3>${esc(title)}</h3><div class="alt">${esc(alt)}</div><div class="topic">${esc(lang==="en"?ten:tzh)}</div><ul>${list}</ul></div>`;
   }).join("");
 }
-function saveUnits(){ try { localStorage.setItem("jenbio_units", JSON.stringify({pub, sem})); } catch(e) {} }
-renderUnits();
-  document.getElementById("burger").onclick = () => document.getElementById("links").classList.toggle("open");
-  document.querySelectorAll("#links a").forEach(a => a.onclick = () => document.getElementById("links").classList.remove("open"));
-  const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-  }), {threshold:.12}) : null;
-  document.querySelectorAll(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
+function renderGames(){
+  $("#gameCards").innerHTML = GAMES.map(g => `<${g.url?`a href="${esc(g.url)}" target="_blank" rel="noopener"`:"div"} class="card">
+    <div class="ic" style="background:${g.col}"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">${ICONS.games}</svg></div>
+    <h3>${esc(lang==="en"?g.en:g.zh)}</h3><p>${esc(lang==="en"?g.den:g.dzh)}</p>
+    <span class="go">${g.url?(lang==="en"?"Play ›":"開始 ›"):(lang==="en"?"Coming soon":"即將推出")}</span></${g.url?"a":"div"}>`).join("");
+}
+function renderApps(){
+  $("#appGrid").innerHTML = APPS.map(([ic,bg,name,den,dzh]) => `<div class="app"><div class="ic" style="background:${bg}">${ic}</div><h3>${esc(L(name))}</h3><p>${esc(lang==="en"?den:dzh)}</p></div>`).join("");
+}
+function renderTalks(){
+  $("#talkList").innerHTML = TALKS.map(t => {
+    const role = t.role==="speaker" ? (lang==="en"?"Speaker":"講師") : (lang==="en"?"Attendee":"參與");
+    const w = s => t.todo ? `<span class="todo">${esc(s)}</span>` : esc(s);
+    return `<div class="ev"><div class="d">${esc(t.date)}</div><h3>${w(lang==="en"?t.en:t.zh)}<span class="role">${role}</span></h3><p>${w(lang==="en"?t.den:t.dzh)}</p></div>`;
+  }).join("");
+}
+function renderAll(){ renderNav(); renderText(); renderOverview(); renderVideos(); renderUnits(); renderGames(); renderApps(); renderTalks(); }
+function setLang(l){ lang = l; store.set("jenbio_lang", l); renderAll(); }
+function route(){
+  const id = (location.hash || "#overview").slice(1);
+  const ok = document.getElementById(id) && document.getElementById(id).classList.contains("page") ? id : "overview";
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("show", p.id === ok));
+  renderNav(); window.scrollTo(0,0); setTimeout(() => window.scrollTo(0,0), 0);
+}
+$("#burger").onclick = () => $("#menu").classList.toggle("open");
+window.addEventListener("hashchange", route);
+renderAll(); route();
 </script>
 </body>
 </html>
